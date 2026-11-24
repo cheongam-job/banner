@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>현수막 게시 관리</title>
+<style>
+  :root{--bg:#f3f5f8;--card:#fff;--line:#e3e7ed;--line2:#d3d9e1;--text:#18202b;--sub:#5d6979;--blue:#1d4ed8;--navy:#14243b;
+    --g:#e5f4ea;--gT:#17663a;--y:#fff4d4;--yT:#8a5a00;--r:#fde7e4;--rT:#b42318;--gray:#eef1f5;
+    --shadow:0 1px 2px rgba(16,24,40,.05),0 4px 14px rgba(16,24,40,.06)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Pretendard,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+  header{background:var(--navy);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  header .ttl{display:flex;flex-direction:column}
+  header .org{font-size:13px;opacity:.7;font-weight:500;letter-spacing:.02em}
+  h1{font-size:23px;margin:0;font-weight:700;letter-spacing:-.02em}
+  h2{font-size:19px;margin:0 0 14px;font-weight:700;letter-spacing:-.02em}
+  header .me{color:#c7d2e0;font-size:14px;display:flex;align-items:center;gap:10px}
+  header .out{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  .login{max-width:520px;margin:60px auto;text-align:center}
+  .login h2{font-size:22px;margin-bottom:8px}
+  .gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line2);border-radius:10px;padding:13px 22px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--text);margin-top:18px}
+  .gbtn:hover{background:var(--gray)}
+  .gbtn i{width:20px;height:20px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0)}
+  .me{color:var(--sub);font-size:14px}
+  nav{display:flex;gap:6px;padding:10px 24px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:0;z-index:5}
+  nav button{border:0;background:none;padding:10px 18px;border-radius:999px;cursor:pointer;font-size:16px;font-weight:600;color:var(--sub);white-space:nowrap;font-family:inherit}
+  nav button:hover{background:var(--gray)}
+  nav button.on{background:var(--navy);color:#fff}
+  nav .cnt{display:inline-block;background:#ef4444;color:#fff;border-radius:999px;font-size:12px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+  main{max-width:1880px;margin:0 auto;padding:24px 32px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  button.b{border:1px solid var(--line2);background:#fff;border-radius:10px;padding:9px 16px;cursor:pointer;font-size:15px;font-weight:600;font-family:inherit;color:var(--text)}
+  button.b:hover{background:var(--gray)}
+  button.p{background:var(--blue);border-color:var(--blue);color:#fff}
+  button.p:hover{background:#1e40af}
+  button.d{color:var(--rT)}
+  button:disabled{opacity:.5;cursor:default}
+  .wrap{overflow-x:auto}
+  table{border-collapse:separate;border-spacing:0;width:100%;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px;text-align:center;font-size:14px}
+  tr:last-child td{border-bottom:0} th:last-child,td:last-child{border-right:0}
+  th{background:#f8fafc;font-weight:600;color:var(--sub);white-space:nowrap}
+  th.sat{color:#1d4ed8} th.sun{color:#dc2626}
+  td.place{text-align:left;font-weight:700;white-space:nowrap;background:#fff}
+  td.c{cursor:pointer;min-width:56px}
+  td.c b{display:block;font-size:17px}
+  td.c small{font-size:12px}
+  td.g{background:var(--g);color:var(--gT)} td.y{background:var(--y);color:var(--yT)} td.r{background:var(--r);color:var(--rT)}
+  td.past{background:var(--gray);color:#a0a9b5}
+  .legend{font-size:14px;color:var(--sub);display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+  .legend span::before{content:"";display:inline-block;width:12px;height:12px;margin-right:6px;border-radius:3px;vertical-align:-1px;background:var(--c)}
+  .legend span:not([style])::before{display:none}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;background:#fff}
+  .item .t{font-weight:700;font-size:17px}
+  .item .s{color:var(--sub);font-size:14px;margin-top:4px;line-height:1.6}
+  .item .q{margin-top:8px;padding:10px 12px;background:#f6f8fb;border-radius:8px;font-size:15px;white-space:pre-wrap}
+  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:999px;margin-left:8px;font-weight:600;vertical-align:2px}
+  .t대기{background:var(--y);color:var(--yT)} .t승인,.t게시{background:var(--g);color:var(--gT)}
+  .t반려,.t철거필요{background:var(--r);color:var(--rT)} .t취소,.t철거완료{background:var(--gray);color:var(--sub)}
+  label.f{display:block;margin-bottom:16px}
+  label.f > span{display:block;font-size:14px;font-weight:600;color:var(--sub);margin-bottom:6px}
+  input[type=text],input[type=date],textarea,select{width:100%;padding:11px 12px;border:1px solid var(--line2);border-radius:10px;font-size:16px;font-family:inherit;background:#fff;color:var(--text)}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,78,216,.15)}
+  textarea{min-height:80px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.row2{grid-template-columns:1fr} main{padding:14px} header{padding:14px 16px} nav{padding:8px 12px} .card{padding:16px}}
+  .places label{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;margin-bottom:8px;cursor:pointer;font-size:16px;font-weight:600}
+  .places label.no{color:#a0a9b5;background:var(--gray);cursor:default}
+  .places input{width:18px;height:18px}
+  .places small{margin-left:auto;color:var(--sub);font-size:14px;font-weight:500}
+  .msg{padding:14px 16px;border-radius:12px;margin-bottom:16px;font-size:15px;line-height:1.7}
+  .msg.err{background:var(--r);color:var(--rT)} .msg.ok{background:var(--g);color:var(--gT)} .msg.info{background:#eef4ff;color:#1e3a8a}
+  .empty{color:var(--sub);font-size:15px;padding:8px 0}
+  #loading{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;align-items:center;justify-content:center;font-size:17px;font-weight:600;z-index:9}
+  .sec{margin-top:20px}
+  .narrow{max-width:1240px;margin-left:auto;margin-right:auto}
+  /* 게시대 모양 */
+  .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:28px}
+  .board{display:grid;grid-row:span 2;grid-template-rows:subgrid;grid-template-columns:minmax(0,1fr);row-gap:0;min-width:0}
+  .stand{display:flex;flex-direction:column;min-width:0}
+  .boards{grid-auto-rows:auto}
+  .board{--pc:#1f4e8c;--pl:#e8eef8;--pf:#7f97bd}
+  .frame{flex:1;border-left:7px solid var(--pf);border-right:7px solid var(--pf);padding:14px 14px 6px;background:var(--pl);border-top:7px solid var(--pf);border-radius:6px 6px 0 0}
+  .slot{margin-bottom:14px;position:relative;padding-left:34px}
+  .slot .no{position:absolute;left:0;top:18px;font-size:14px;font-weight:800;color:var(--pc)}
+  .bn{min-height:62px;border-radius:6px;padding:8px 16px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow:hidden;box-shadow:0 2px 6px rgba(16,24,40,.12);transition:transform .1s}
+  .bn:hover{transform:translateY(-1px)}
+  .bn .bt{font-weight:700;font-size:18px;line-height:1.35;letter-spacing:-.02em;word-break:keep-all;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .bn .bd{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;margin-top:2px}
+  .bn.on{background:var(--pc);color:#fff}
+  .bn.wait{background:var(--y);color:var(--yT);border:2px dashed #d9a400;box-shadow:none}
+  .bn.over{background:#fff;color:var(--rT);border:2px solid var(--rT)}
+  .bn.late{outline:4px solid #dc2626;outline-offset:-4px;box-shadow:0 0 0 3px rgba(220,38,38,.25)}
+  .per.late{color:#dc2626;font-weight:700}
+  .rsvbox{margin-top:12px;background:#fff;border:1px solid var(--line);border-top:4px solid var(--pc);border-radius:8px;padding:10px 12px}
+  .rsvh{font-weight:700;font-size:15px;color:var(--pc);margin-bottom:6px}
+  .rsv-none{font-size:14px;color:var(--sub);padding:4px 0}
+  .rsv-i{min-width:0;display:flex;align-items:center;gap:10px;padding:8px 6px;border-top:1px solid #eef1f5;cursor:pointer;font-size:14px;border-radius:6px}
+  .rsv-i:first-of-type{border-top:0}
+  .rsv-i:hover{background:#f6f8fb}
+  .rsv-i.pick{outline:2px solid #f59e0b}
+  .rsv-no{flex:none;width:38px;text-align:center;font-weight:800;font-size:13px;color:#fff;background:var(--pc);border-radius:5px;padding:2px 0}
+  .rsv-i.w .rsv-no{background:#d9a400}
+  .rsv-d{flex:none;font-weight:700;color:var(--text);white-space:nowrap}
+  .rsv-t{flex:1;min-width:0;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rsv-tag{flex:none;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--y);color:var(--yT)}
+  .rsv-tag.ok{background:var(--g);color:var(--gT)}
+  .bn.empty{background:rgba(255,255,255,.75);border:2px dashed #c3c9d1;color:#98a2b0;box-shadow:none;align-items:center;font-size:15px;font-weight:600}
+  .bn.empty:hover{border-color:var(--pc);color:var(--pc)}
+  .bn.past{cursor:default}
+  .bn.past:hover{transform:none}
+  .bn.pick{outline:3px solid #f59e0b;outline-offset:2px}
+  .per{font-size:14px;color:var(--sub);text-align:center;margin-top:5px;min-height:18px}
+  .per b{color:var(--text);font-weight:700}
+  .legs{display:flex;justify-content:space-between;height:28px}
+  .legs i{width:7px;background:var(--pf);margin:0 14%}
+  .base{background:var(--pc);color:#fff;text-align:center;padding:12px 8px;border-radius:8px;font-weight:700;font-size:19px;letter-spacing:-.02em;box-shadow:0 2px 6px rgba(16,24,40,.15)}
+  .base small{display:block;font-weight:500;font-size:14px;opacity:.9;margin-top:2px}
+  details.more summary{cursor:pointer;color:var(--blue);font-size:16px;font-weight:600}
+  .datebar b{font-size:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="ttl"><span class="org">청암대학교 취업지원센터</span><h1>현수막 게시 관리</h1></div>
+  <div class="me" id="me">불러오는 중…</div>
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+<div id="loading">처리 중…</div>
+
+<script src="config.js"></script>
+<script>
+let D = null, 탭 = '현황', 알림 = null;
+
+/* ---------- 날짜 ---------- */
+function 값(s){const p=s.split('-').map(Number);return Date.UTC(p[0],p[1]-1,p[2]);}
+function 문(t){const d=new Date(t);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
+function 더하기(s,n){return 문(값(s)+n*86400000);}
+function 차이(a,b){return Math.round((값(b)-값(a))/86400000);}
+function 요일(s){return '일월화수목금토'[new Date(값(s)).getUTCDay()];}
+function 짧게(s){const p=s.split('-');return Number(p[1])+'/'+Number(p[2]);}
+function 평일수(a,b){let n=0;for(let d=a;d<=b;d=더하기(d,1)){const w=new Date(값(d)).getUTCDay();if(w!==0&&w!==6)n++;}return n;}
+function 게시일수(a,b){return D&&D.set.평일!==false?평일수(a,b):차이(a,b)+1;}
+function 일수글(a,b){const 달력=차이(a,b)+1;return D&&D.set.평일!==false?'평일 '+평일수(a,b)+'일('+달력+'일)':달력+'일';}
+function 평일더하기(a,n){let d=a,k=0;for(let i=0;i<400;i++){const w=new Date(값(d)).getUTCDay();if(w!==0&&w!==6){k++;if(k>=n)return d;}d=더하기(d,1);}return d;}
+function 단위(){return D.set.평일!==false?'평일 ':'';}
+function 기간(o){return 짧게(o.시작)+'('+요일(o.시작)+') ~ '+짧게(o.종료)+'('+요일(o.종료)+') · '+일수글(o.시작,o.종료);}
+
+/* ---------- 공통 ---------- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function 처리중(on){document.getElementById('loading').style.display=on?'flex':'none';}
+/* ---------- Supabase 연결 (로그인 + 기능 호출) ---------- */
+const CFG=window.BANNER_CONFIG||{};
+const 주소=String(CFG.SUPABASE_URL||'').replace(/\/+$/,''), 공개키=CFG.SUPABASE_ANON_KEY||'', 도메인=CFG.DOMAIN||'scjc.ac.kr';
+const 세션키='banner_session_v1';
+let 세션=null;
+function 세션읽기(){try{return JSON.parse(localStorage.getItem(세션키)||'null');}catch(e){return null;}}
+function 세션저장(v){세션=v;try{v?localStorage.setItem(세션키,JSON.stringify(v)):localStorage.removeItem(세션키);}catch(e){}}
+function 돌아올주소(){return location.origin+location.pathname;}
+function 로그인(){
+  location.href=주소+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(돌아올주소())+
+    '&hd='+encodeURIComponent(도메인)+'&prompt=select_account';
+}
+function 로그아웃(){
+  const t=세션&&세션.access_token;세션저장(null);D=null;
+  if(t)fetch(주소+'/auth/v1/logout',{method:'POST',headers:{apikey:공개키,Authorization:'Bearer '+t}}).catch(()=>{});
+  로그인화면();
+}
+/* 구글 로그인 뒤 주소 뒤(#)에 붙어 오는 토큰 받기 */
+function 토큰받기(){
+  if(!location.hash||location.hash.length<2)return null;
+  const p=new URLSearchParams(location.hash.slice(1));
+  history.replaceState(null,'',돌아올주소()+location.search);
+  if(p.get('error_description'))return {오류:p.get('error_description')};
+  if(!p.get('access_token'))return null;
+  세션저장({access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),
+    expires_at:Math.floor(Date.now()/1000)+Number(p.get('expires_in')||3600)});
+  return {ok:true};
+}
+async function 토큰갱신(){
+  if(!세션||!세션.refresh_token)throw {로그인:true};
+  const r=await fetch(주소+'/auth/v1/token?grant_type=refresh_token',{method:'POST',
+    headers:{apikey:공개키,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:세션.refresh_token})});
+  if(!r.ok){세션저장(null);throw {로그인:true};}
+  const j=await r.json();
+  세션저장({access_token:j.access_token,refresh_token:j.refresh_token,expires_at:Math.floor(Date.now()/1000)+Number(j.expires_in||3600)});
+}
+async function 기능(이름,값,다시){
+  if(!세션)throw {로그인:true};
+  if(!세션.expires_at||세션.expires_at-60<Date.now()/1000)await 토큰갱신();
+  let r;
+  try{
+    r=await fetch(주소+'/rest/v1/rpc/'+이름,{method:'POST',
+      headers:{apikey:공개키,Authorization:'Bearer '+세션.access_token,'Content-Type':'application/json'},body:JSON.stringify(값||{})});
+  }catch(e){throw new Error('서버에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해 주세요.');}
+  if(r.status===401&&!다시){await 토큰갱신();return 기능(이름,값,true);}
+  const txt=await r.text();let j=null;try{j=txt?JSON.parse(txt):null;}catch(e){}
+  if(!r.ok)throw new Error((j&&(j.message||j.error_description||j.error))||('오류 '+r.status));
+  return j;
+}
+const 함수표={
+  webData:['web_data',()=>({})],
+  webApply:['web_apply',f=>({f:f})],
+  webAddExisting:['web_add_existing',f=>({f:f})],
+  webEditGroup:['web_edit_group',(id,f)=>({p_id:id,f:f})],
+  webCancel:['web_cancel',id=>({p_id:id})],
+  webDecide:['web_decide',(id,k,why)=>({p_id:id,p_decision:k,p_reason:why||''})],
+  webRemoved:['web_removed',id=>({p_id:id})],
+  webMoveSlot:['web_move_slot',(id,n)=>({p_id:id,p_slot:Number(n)})]
+};
+function 실행(함수,인자,성공){
+  처리중(true);
+  const [이름,변환]=함수표[함수];
+  기능(이름,변환.apply(null,인자||[])).then(r=>{처리중(false);성공&&성공(r);})
+    .catch(e=>{처리중(false);if(e&&e.로그인){로그인화면('로그인이 끝났습니다. 다시 로그인해 주세요.');return;}
+      알림={k:'err',t:(e&&e.message)||String(e)};그리기();});
+}
+function 로그인화면(메시지){
+  document.getElementById('nav').innerHTML='';
+  document.getElementById('me').innerHTML='';
+  document.getElementById('main').innerHTML='<div class="card login"><h2>현수막 게시 관리</h2>'+
+    '<div class="me" style="justify-content:center">학교 구글 계정(@'+esc(도메인)+')으로 로그인해 주세요.</div>'+
+    (메시지?'<div class="msg err" style="margin-top:16px">'+esc(메시지)+'</div>':'')+
+    '<button class="gbtn" onclick="로그인()"><i></i>학교 구글 계정으로 로그인</button>'+
+    '<div class="me" style="justify-content:center;margin-top:18px;font-size:13px">처음 한 번은 구글 계정 선택 화면이 나옵니다.</div></div>';
+}
+function 불러오기(다음){
+  const 늦음=setTimeout(()=>{if(!D){알림={k:'err',t:'서버 응답이 늦습니다 (20초 넘음). 새로고침해 보고, 계속 안 되면 관리자에게 알려 주세요.'};처리중(false);그리기();}},20000);
+  실행('webData',[],d=>{clearTimeout(늦음);D=d;if(알림&&알림.k==='err')알림=null;다음&&다음();그리기();});
+}
+function 직접(o){return o.초과사유==='기존 게시분 등록'||o.초과사유==='관리자 직접 등록';}
+function 사용중(o){return o.상태==='대기'||o.상태==='승인';}
+function 상태표시(o){
+  if(o.상태==='승인'){
+    if(o.종료<D.오늘)return['철거 필요','철거필요'];
+    if(o.시작<=D.오늘)return['게시 중','게시'];
+    return['승인(게시 예정)','승인'];
+  }
+  return[o.상태,o.상태];
+}
+function 태그(o){const s=상태표시(o);return '<span class="tag t'+s[1]+'">'+esc(s[0])+'</span>';}
+function 철거전(o){return o.상태==='승인'&&o.종료<D.오늘;}
+function 끝(o){return 철거전(o)?D.오늘:o.종료;}
+function 그날목록(장소,d){return D.rows.filter(o=>o.장소===장소&&사용중(o)&&o.시작<=d&&끝(o)>=d);}
+/* 그날 게시대 칸 배치: [0]=1번(맨 위) ... 칸 번호 없는 옛 기록은 빈 칸에 위부터 */
+function 칸수(p){return (D.set.칸수&&D.set.칸수[p])||D.set.자리수;}
+/* 게시대 아래 예약 목록: 보는 날 다음부터 시작하는 신청(승인·대기), 시작일 순 */
+function 예약목록(p,d){
+  const L=D.rows.filter(o=>o.장소===p&&사용중(o)&&o.시작>d).sort((a,b)=>a.시작.localeCompare(b.시작)||a.신청일시.localeCompare(b.신청일시));
+  let h='<div class="rsvbox"><div class="rsvh">예약 '+L.length+'건</div>';
+  if(!L.length)h+='<div class="rsv-none">예약된 현수막이 없습니다.</div>';
+  L.forEach(o=>{
+    const 대기=o.상태==='대기';
+    h+='<div class="rsv-i'+(대기?' w':'')+(선택번호===o.번호?' pick':'')+'" onclick="칸누름(\''+o.번호+'\')">'+
+      '<span class="rsv-no">'+(o.칸?o.칸+'번':'-')+'</span>'+
+      '<span class="rsv-d">'+짧게(o.시작)+'('+요일(o.시작)+') ~ '+짧게(o.종료)+'('+요일(o.종료)+')</span>'+
+      '<span class="rsv-t">'+esc(o.부서)+' · '+esc(o.행사명)+'</span>'+
+      (대기?'<span class="rsv-tag">승인 대기</span>':'<span class="rsv-tag ok">승인</span>')+'</div>';
+  });
+  return h+'</div>';
+}
+function 칸배치(장소,d){
+  const L=그날목록(장소,d).sort((a,b)=>a.시작.localeCompare(b.시작)||a.번호.localeCompare(b.번호));
+  const N=칸수(장소), out=new Array(N).fill(null), 남은=[];
+  L.forEach(o=>{if(o.칸>=1&&o.칸<=N&&!out[o.칸-1])out[o.칸-1]=o;else 남은.push(o);});
+  for(let i=0;i<out.length&&남은.length;i++)if(!out[i])out[i]=남은.shift();
+  return out.concat(남은);
+}
+/* 기간 내내 비어 있는 칸 번호 목록 */
+function 빈칸목록(장소,a,b,제외){
+  const 대상=D.rows.filter(o=>o.번호!==제외&&o.장소===장소&&사용중(o)&&o.시작<=b&&끝(o)>=a);
+  const r=[];
+  const N=칸수(장소);
+  for(let n=1;n<=N;n++){
+    if(대상.some(o=>o.칸===n))continue;
+    let ok=true;
+    for(let d=a;d<=b&&ok;d=더하기(d,1)){
+      const 그날=대상.filter(o=>o.시작<=d&&끝(o)>=d);
+      const 쓴=new Set(그날.filter(o=>o.칸).map(o=>o.칸));let 빈=0;
+      for(let k=1;k<=N;k++)if(!쓴.has(k)&&k!==n)빈++;
+      if(그날.filter(o=>!o.칸).length>빈)ok=false;
+    }
+    if(ok)r.push(n);
+  }
+  return r;
+}
+function 최소남은(장소,a,b){
+  let m={남은:칸수(장소),날짜:a};
+  for(let d=a;d<=b;d=더하기(d,1)){const n=칸수(장소)-그날목록(장소,d).length;if(n<m.남은)m={남은:n,날짜:d};}
+  return m;
+}
+
+/* ---------- 화면 ---------- */
+function 그리기(){
+  if(!D){
+    if(알림){
+      document.getElementById('me').textContent='';
+      document.getElementById('main').innerHTML='<div class="card"><h2>화면을 열지 못했습니다</h2><div class="msg err">'+esc(알림.t)+'</div>'+
+        '<div class="s" style="font-size:14px;line-height:1.8">· 새로고침하거나 아래 [다시 시도]를 눌러 주세요.<br>· 학교 계정이 아닌 계정으로 로그인했다면 [다른 계정으로 로그인]을 눌러 주세요.<br>· 계속 안 되면 이 화면을 캡처해 취업지원센터로 보내 주세요.</div>'+
+        '<div class="acts" style="margin-top:12px"><button class="b p" onclick="알림=null;불러오기()">다시 시도</button><button class="b" onclick="로그아웃()">다른 계정으로 로그인</button></div></div>';
+    }
+    return;
+  }
+  document.getElementById('me').innerHTML='<span>'+esc(D.me)+(D.admin?' · 관리자':'')+'</span><button class="out" onclick="로그아웃()">로그아웃</button>';
+  const 대기수=D.rows.filter(o=>o.상태==='대기').length;
+  const 철거수=D.rows.filter(o=>o.상태==='승인'&&o.종료<D.오늘).length;
+  const tabs=[['현황','게시 현황'],['신청','신청하기'],['내신청','내 신청']];
+  if(D.admin)tabs.push(['관리','관리'+((대기수+철거수)?'<span class="cnt">'+(대기수+철거수)+'</span>':'')]);
+  document.getElementById('nav').innerHTML=tabs.map(t=>'<button class="'+(탭===t[0]?'on':'')+'" onclick="탭=\''+t[0]+'\';알림=null;수정번호=null;직접열기=false;그리기()">'+t[1]+'</button>').join('');
+  const m=알림?'<div class="msg '+알림.k+'">'+esc(알림.t)+'</div>':'';
+  const html=(수정번호?수정창():'')+{현황:현황,신청:신청,내신청:내신청,관리:관리}[탭]();
+  document.getElementById('main').innerHTML=탭==='현황'?m+html:'<div class="narrow">'+m+html+'</div>';
+  if(탭==='신청')신청갱신();
+  if(탭==='관리')직접칸갱신();
+  if(수정번호)수정칸갱신();
+}
+
+let 보는날=null, 선택번호=null;
+const 장소색=[['#1f4e8c','#e8eef8','#7f97bd'],['#2b7a4b','#e6f3ea','#82b597'],['#7a4596','#f1e9f6','#b494c6'],['#b5651d','#faeedf','#d8a878'],['#0f7c86','#e2f3f4','#7fbcc1']];
+function 색(p){const c=장소색[Math.max(D.set.장소.indexOf(p),0)%장소색.length];return '--pc:'+c[0]+';--pl:'+c[1]+';--pf:'+c[2];}
+function 현황(){
+  if(!보는날)보는날=D.오늘;
+  const d=보는날, 오늘보기=d===D.오늘, 지난날=d<D.오늘;
+  let h='<div class="card"><div class="bar">'+
+    '<button class="b" onclick="보는날=더하기(보는날,-1);선택번호=null;그리기()">◀ 전날</button>'+
+    '<input type="date" value="'+d+'" style="width:auto" onchange="if(this.value){보는날=this.value;선택번호=null;그리기()}">'+
+    '<b style="font-size:20px;margin:0 4px">'+짧게(d)+' ('+요일(d)+')'+(오늘보기?' <span style="font-size:14px;color:var(--blue)">오늘</span>':'')+'</b>'+
+    '<button class="b" onclick="보는날=더하기(보는날,1);선택번호=null;그리기()">다음날 ▶</button>'+
+    (오늘보기?'':'<button class="b" onclick="보는날=D.오늘;선택번호=null;그리기()">오늘로</button>')+
+    '<button class="b" style="margin-left:auto" onclick="불러오기()">새로고침</button></div>';
+  h+='<div class="boards">';
+  D.set.장소.forEach(p=>{
+    const 배치=칸배치(p,d), L=배치.filter(x=>x);
+    let k='';
+    for(let n=0;n<배치.length;n++){
+      const o=배치[n];
+      k+='<div class="slot"><div class="no">'+(n<칸수(p)?(n+1)+'번':'칸 밖')+'</div>';
+      if(o){
+        const 대기=o.상태==='대기', 지남=철거전(o);
+        k+='<div class="bn '+(대기?'wait':'on')+(지남?' late':'')+(선택번호===o.번호?' pick':'')+'" onclick="칸누름(\''+o.번호+'\')" title="'+esc(o.문구)+'">'+
+          '<div class="bt">'+esc(o.문구.split('\n')[0]||o.행사명)+'</div><div class="bd">'+esc(o.부서)+' · '+esc(o.행사명)+(대기?' (승인 대기)':'')+'</div></div>'+
+          (지남?'<div class="per late">'+짧게(o.종료)+'('+요일(o.종료)+') 게시 끝남 · 철거 필요</div>':'<div class="per"><b>'+짧게(o.시작)+'('+요일(o.시작)+')</b> ~ <b>'+짧게(o.종료)+'('+요일(o.종료)+')</b> · '+일수글(o.시작,o.종료)+(o.종료===d?' · 이날 철거':'')+'</div>');
+      }else if(지난날){
+        k+='<div class="bn empty past">비어 있음</div><div class="per"></div>';
+      }else{
+        k+='<div class="bn empty" onclick="빈칸누름(\''+esc(p)+'\','+(n+1)+',\''+d+'\')">빈 칸 · '+(D.admin?'눌러서 등록':'눌러서 신청')+'</div><div class="per"></div>';
+      }
+      k+='</div>';
+    }
+    const 남=칸수(p)-L.length;
+    h+='<div class="board" style="'+색(p)+'"><div class="stand"><div class="frame">'+k+'</div><div class="legs"><i></i><i></i></div>'+
+      '<div class="base">'+esc(p)+'<small>'+(지난날?'게시 '+L.length+'개':'남은 자리 '+Math.max(남,0)+' / '+칸수(p))+'</small></div></div>'+예약목록(p,d)+'</div>';
+  });
+  h+='</div><div class="legend" style="margin-top:14px"><span style="--c:linear-gradient(90deg,#1f4e8c 33%,#2b7a4b 33% 66%,#7a4596 66%)">게시 중 (장소별 색)</span><span style="--c:var(--y)">승인 대기 (자리 차지)</span><span style="--c:#dc2626">빨간 테두리: 기간 끝남·철거 필요</span><span style="--c:#c3c9d1">빈 칸</span><span>칸 번호는 맨 위가 1번</span></div></div>';
+  if(선택번호){
+    const o=D.rows.find(x=>x.번호===선택번호);
+    if(o){
+      const 내것=o.계정===D.me||D.admin;
+      let 이동='';
+      if(D.admin&&사용중(o)){
+        const 빈=빈칸목록(o.장소,o.시작,o.종료,o.번호);
+        이동='<div class="bar" style="margin-top:8px"><span class="me">칸 옮기기 (게시 기간 내내 비어 있는 칸만):</span>'+
+          (빈.length?빈.filter(n=>n!==o.칸).map(n=>'<button class="b" onclick="칸이동(\''+o.번호+'\','+n+')">'+n+'번으로</button>').join(''):'<span class="me">옮길 수 있는 칸 없음</span>')+'</div>';
+      }
+      h+='<div class="card"><div class="bar" style="margin-bottom:8px"><h2 style="margin:0">현수막 정보</h2><button class="b" style="margin-left:auto" onclick="선택번호=null;그리기()">닫기</button></div>'+항목(o,내것?버튼들(o,true):'')+이동+'</div>';
+    }
+  }
+  return h;
+}
+
+let 초안={};
+function 신청시작(p,d){초안={장소:[p],시작:d,종료:d};탭='신청';알림=null;그리기();}
+function 신청(){
+  const 최대=더하기(D.오늘,D.set.미리일);
+  const v=k=>esc(초안[k]||'');
+  let h='<div class="card"><h2>현수막 게시 신청</h2>'+
+    '<div class="msg info">· 현수막 규격 6100 × 700 mm · 장소별 칸 수: '+D.set.장소.map(p=>esc(p)+' '+칸수(p)+'칸').join(', ')+'<br>· 게시 기간 기본 '+단위()+D.set.기본일+'일'+(D.set.평일!==false?'(토·일 제외, 약 2주)':'')+', 최대 '+단위()+D.set.최대일+'일 ('+D.set.기본일+'일을 넘으면 사유 입력, 사안별 승인)<br>· 행사성 홍보물은 행사 종료 시 바로 철거 · 게시 기간이 끝나면 신청 부서에서 직접 철거·폐기<br>· 신청 후 취업지원센터 승인이 나야 게시할 수 있습니다.</div>'+
+    '<div class="row2"><label class="f"><span>부서/학과</span><input type="text" id="f부서" placeholder="예: 간호학과, 학생처" value="'+v('부서')+'"></label>'+
+    '<label class="f"><span>담당자</span><input type="text" id="f담당자" value="'+v('담당자')+'"></label></div>'+
+    '<div class="row2"><label class="f"><span>연락처·내선 (선택)</span><input type="text" id="f연락처" value="'+v('연락처')+'"></label>'+
+    '<label class="f"><span>행사명 (선택, 비우면 문구로 표시)</span><input type="text" id="f행사명" value="'+v('행사명')+'"></label></div>'+
+    '<label class="f"><span>현수막 문구</span><textarea id="f문구">'+v('문구')+'</textarea></label>'+
+    '<div class="row2"><label class="f"><span>게시 시작일</span><input type="date" id="f시작" min="'+D.오늘+'" max="'+최대+'" value="'+v('시작')+'" onchange="if(fv(\'시작\'))document.getElementById(\'f종료\').value=(D.set.평일!==false?평일더하기(fv(\'시작\'),D.set.기본일):더하기(fv(\'시작\'),D.set.기본일-1));신청갱신()"></label>'+
+    '<label class="f"><span>게시 종료일 (철거일)</span><input type="date" id="f종료" min="'+D.오늘+'" max="'+최대+'" value="'+v('종료')+'" onchange="신청갱신()"></label></div>'+
+    '<div id="기간안내" class="me" style="margin:-4px 0 12px"></div>'+
+    '<label class="f" id="초과칸" style="display:none"><span>'+단위()+D.set.기본일+'일 초과 사유 (필수)</span><input type="text" id="f초과사유" value="'+v('초과사유')+'" placeholder="예: 모집 기간이 4주라 마감일까지 게시"></label>'+
+    '<div class="f"><span class="me">게시 장소 (여러 곳 선택 가능, 장소마다 1개씩 신청 · 칸은 맨 위 1번부터 기간 내내 빈 칸이 자동 배정)</span><div class="places" id="장소들" style="margin-top:4px"></div></div>'+
+    '<button class="b p" id="신청버튼" onclick="신청보내기()">신청하기</button></div>';
+  return h;
+}
+function fv(k){const e=document.getElementById('f'+k);return e?e.value.trim():'';}
+function 초안저장(){['부서','담당자','연락처','행사명','문구','시작','종료','초과사유'].forEach(k=>초안[k]=fv(k));초안.장소=[...document.querySelectorAll('#장소들 input:checked')].map(x=>x.value);}
+function 신청갱신(){
+  const box=document.getElementById('장소들');
+  const 전=box.dataset.r?[...box.querySelectorAll('input:checked')].map(x=>x.value):(초안.장소||[]);
+  box.dataset.r='1';
+  const a=fv('시작'),b=fv('종료')||a;
+  const 안내=document.getElementById('기간안내');
+  let ok=!!a&&b>=a;
+  if(!a)안내.textContent='시작일을 고르면 장소별 남은 자리가 보입니다.';
+  else if(b<a){안내.textContent='종료일이 시작일보다 앞입니다.';}
+  else{const n=게시일수(a,b);안내.textContent=기간({시작:a,종료:b});
+    if(n>D.set.최대일)안내.textContent+=' — 최대 '+단위()+D.set.최대일+'일을 넘습니다. 사유를 적으면 신청할 수 있고, 승인할 때 따로 확인합니다.';
+    else if(n>D.set.기본일)안내.textContent+=' — '+단위()+D.set.기본일+'일을 넘어 사유 입력이 필요합니다.';}
+  document.getElementById('초과칸').style.display=a&&b>=a&&게시일수(a,b)>D.set.기본일?'':'none';
+  안내.style.color=!ok&&a?'var(--rT)':(a&&b>=a&&게시일수(a,b)>D.set.최대일?'var(--yT)':'');
+  document.getElementById('장소들').innerHTML=D.set.장소.map(p=>{
+    let 남='',막=false;
+    if(ok){const 빈=빈칸목록(p,a,b,'');막=!빈.length;남=막?'기간 내내 빈 칸 없음':'빈 칸 '+빈.map(n=>n+'번').join('·')+' → '+빈[0]+'번 배정';}
+    return '<label class="'+(막?'no':'')+'" style="'+색(p)+';border-left:6px solid var(--pc)"><input type="checkbox" value="'+esc(p)+'" '+(막?'disabled':'')+(!막&&전.indexOf(p)>=0?' checked':'')+'>'+esc(p)+'<small>'+남+'</small></label>';
+  }).join('');
+}
+function 신청보내기(){
+  초안저장();
+  const f=Object.assign({},초안);
+  if(!f.종료)f.종료=f.시작;
+  실행('webApply',[f],r=>{
+    알림={k:'ok',t:'신청했습니다: '+r.칸.join(', ')+'. 승인 결과는 [내 신청]에서 확인할 수 있습니다.'};
+    초안={부서:f.부서,담당자:f.담당자,연락처:f.연락처};
+    탭='내신청';불러오기();
+  });
+}
+
+function 항목(o,버튼){
+  return '<div class="item"><div style="flex:1;min-width:220px"><div class="t">'+esc(o.행사명)+태그(o)+'</div>'+
+    '<div class="s"><b style="'+색(o.장소)+';color:var(--pc)">● '+esc(o.장소)+(o.칸?' '+o.칸+'번 칸':'')+'</b> · '+기간(o)+'<br>'+esc(o.부서)+' · '+esc(o.담당자)+' ('+esc(o.연락처)+') · 신청 '+esc(o.신청일시)+
+    (o.사유?'<br><span style="color:var(--rT)">반려 사유: '+esc(o.사유)+'</span>':'')+
+    (!직접(o)&&사용중(o)&&게시일수(o.시작,o.종료)>D.set.최대일?'<br><b style="color:var(--rT)">최대 '+단위()+D.set.최대일+'일 초과 — 승인 전 확인</b>':'')+(o.초과사유?'<br>'+(직접(o)?'관리자 직접 등록':단위()+D.set.기본일+'일 초과 사유: '+esc(o.초과사유)):'')+
+    (o.철거일?'<br>철거 완료 '+esc(o.철거일):'')+'</div><div class="q">'+esc(o.문구)+'</div></div>'+
+    (버튼?'<div class="acts">'+버튼+'</div>':'')+'</div>';
+}
+function 내신청(){
+  const L=D.rows.filter(o=>o.계정===D.me).sort((a,b)=>b.신청일시.localeCompare(a.신청일시));
+  let h='<div class="card"><div class="bar"><h2 style="margin:0">내 신청 ('+L.length+')</h2><button class="b p" style="margin-left:auto" onclick="초안={부서:초안.부서,담당자:초안.담당자,연락처:초안.연락처};탭=\'신청\';알림=null;그리기()">+ 새로 신청</button></div>';
+  h+=L.length?L.map(o=>항목(o,버튼들(o,true))).join(''):'<div class="empty">신청한 현수막이 없습니다.</div>';
+  return h+'</div>';
+}
+function 버튼들(o,취소포함){
+  let b='';
+  if(o.상태==='승인'&&o.시작<=D.오늘)b+='<button class="b p" onclick="철거(\''+o.번호+'\')">철거 완료</button>';
+  if(취소포함&&사용중(o)&&o.종료>=D.오늘&&!(o.상태==='승인'&&o.시작<=D.오늘))b+='<button class="b d" onclick="취소(\''+o.번호+'\')">신청 취소</button>';
+  if(사용중(o)&&(D.admin||(o.계정===D.me&&o.상태==='대기')))b+='<button class="b" onclick="수정열기(\''+o.번호+'\')">수정</button>';
+  if(취소포함)b+='<button class="b" onclick="복사신청(\''+o.번호+'\')">이 내용으로 추가 신청</button>';
+  if(o.상태!=='취소')b+='<button class="b" onclick="신청서(\''+o.번호+'\')">신청서 인쇄</button>';
+  return b;
+}
+/* 같은 내용으로 새 신청: 기간이 아직 남았으면 같은 기간(다른 장소 추가용), 지났으면 날짜는 비움 */
+let 수정번호=null;
+function 수정열기(번호){수정번호=번호;알림=null;그리기();scrollTo(0,0);}
+function 묶음(o){const 앞=o.번호.replace(/-\d+$/,'');return D.rows.filter(x=>x.번호.replace(/-\d+$/,'')===앞&&사용중(x));}
+function 수정창(){
+  const o=D.rows.find(x=>x.번호===수정번호);if(!o){수정번호=null;return '';}
+  const v=k=>esc(o[k]||'');
+  const 같이=묶음(o);
+  const 장소칸=D.set.장소.map(p=>{
+    const r=같이.find(x=>x.장소===p);
+    return '<label style="'+색(p)+';border-left:6px solid var(--pc)"><input type="checkbox" class="e장소" value="'+esc(p)+'"'+(r?' checked':'')+'>'+esc(p)+
+      (r?'<small style="margin-left:8px">지금 '+(r.칸||'?')+'번</small>':'<small style="margin-left:8px">추가하려면 체크</small>')+
+      (D.admin?'<select class="e칸" data-p="'+esc(p)+'" data-now="'+(r&&r.칸?r.칸:'')+'" style="width:auto;margin-left:auto;padding:6px 8px;font-size:14px" onclick="event.stopPropagation()" onchange="this.closest(\'label\').querySelector(\'input\').checked=true"></select>':'<small style="margin-left:auto">칸 자동</small>')+'</label>';
+  }).join('');
+  return '<div class="card" style="border:2px solid var(--blue)"><div class="bar"><h2 style="margin:0">신청 수정</h2><span class="me">'+esc(o.번호.replace(/-\d+$/,''))+' · 장소 '+같이.length+'곳</span></div>'+
+    '<div class="row2"><label class="f"><span>부서/학과</span><input type="text" id="e부서" value="'+v('부서')+'"></label>'+
+    '<label class="f"><span>담당자</span><input type="text" id="e담당자" value="'+v('담당자')+'"></label></div>'+
+    '<div class="row2"><label class="f"><span>연락처·내선 (선택)</span><input type="text" id="e연락처" value="'+v('연락처')+'"></label>'+
+    '<label class="f"><span>행사명 (선택)</span><input type="text" id="e행사명" value="'+v('행사명')+'"></label></div>'+
+    '<label class="f"><span>현수막 문구</span><textarea id="e문구">'+v('문구')+'</textarea></label>'+
+    '<div class="row2"><label class="f"><span>게시 시작일</span><input type="date" id="e시작" value="'+v('시작')+'" onchange="수정칸갱신()"></label>'+
+    '<label class="f"><span>게시 종료일</span><input type="date" id="e종료" value="'+v('종료')+'" onchange="수정칸갱신()"></label></div>'+
+    '<div class="f"><span class="me" style="font-weight:600">장소'+(D.admin?'와 칸 번호':'')+' (체크를 더하면 같은 내용으로 추가, 빼면 그 장소는 취소)</span><div class="places" id="e장소들" style="margin-top:6px">'+장소칸+'</div></div>'+
+    (직접(o)?'':'<label class="f"><span>'+단위()+D.set.기본일+'일 초과 사유 (넘을 때만)</span><input type="text" id="e초과사유" value="'+v('초과사유')+'"></label>')+
+    '<div class="me" style="margin-bottom:12px">문구·날짜를 고치면 체크된 장소 모두에 함께 반영됩니다. 칸이 맞지 않으면 빈 칸 중 맨 위로 다시 배정합니다.</div>'+
+    '<div class="acts"><button class="b p" onclick="수정저장()">저장</button><button class="b" onclick="수정번호=null;그리기()">닫기</button></div></div>';
+}
+function 수정칸갱신(){
+  const o=D.rows.find(x=>x.번호===수정번호);if(!o)return;
+  const 같이=new Set(묶음(o).map(x=>x.번호));
+  const a=(document.getElementById('e시작')||{}).value,b=(document.getElementById('e종료')||{}).value;
+  document.querySelectorAll('#e장소들 select.e칸').forEach(sel=>{
+    const p=sel.dataset.p,N=칸수(p),전=sel.value||sel.dataset.now;
+    let opts='<option value="">자동 (지금 칸 유지, 안 되면 빈 칸 맨 위)</option>';
+    for(let n=1;n<=N;n++){
+      let 표시='';
+      if(a&&b&&b>=a){const 겹=D.rows.find(x=>!같이.has(x.번호)&&x.장소===p&&x.칸===n&&사용중(x)&&x.시작<=b&&끝(x)>=a);if(겹)표시=' — 사용 중: '+(겹.부서||'')+' '+짧게(겹.시작)+'~'+짧게(겹.종료);}
+      opts+='<option value="'+n+'"'+(표시?' disabled':'')+'>'+n+'번'+(n===1?' (맨 위)':n===N?' (맨 아래)':'')+표시+'</option>';
+    }
+    sel.innerHTML=opts;
+    if(전&&sel.querySelector('option[value="'+전+'"]:not([disabled])'))sel.value=String(전);
+  });
+}
+function 수정저장(){
+  const g=k=>{const e=document.getElementById('e'+k);return e?e.value.trim():'';};
+  const 장소목록=[...document.querySelectorAll('#e장소들 label')].filter(l=>l.querySelector('input').checked)
+    .map(l=>{const sel=l.querySelector('select');return {장소:l.querySelector('input').value,칸:sel?sel.value:''};});
+  const f={부서:g('부서'),담당자:g('담당자'),연락처:g('연락처'),행사명:g('행사명'),문구:g('문구'),시작:g('시작'),종료:g('종료'),초과사유:g('초과사유'),장소목록:장소목록};
+  if(!장소목록.length){if(!confirm('장소를 모두 뺐습니다. 이 신청을 모든 장소에서 취소할까요?'))return;f.전부취소=true;}
+  실행('webEditGroup',[수정번호,f],r=>{수정번호=null;알림={k:'ok',t:'수정했습니다: '+r.결과};불러오기();});
+}
+function 복사신청(번호){
+  const o=D.rows.find(x=>x.번호===번호);if(!o)return;
+  const 남음=o.종료>=D.오늘;
+  const 시작=남음?(o.시작>D.오늘?o.시작:D.오늘):'';
+  초안={부서:o.부서,담당자:o.담당자,연락처:o.연락처,행사명:o.행사명,문구:o.문구,
+    시작:시작,종료:남음?o.종료:'',장소:[]};
+  탭='신청';
+  알림={k:'info',t:'「'+o.행사명+'」 내용을 불러왔습니다. '+(남음?'다른 장소를 고르거나 날짜를 바꿔 신청하세요.':'게시 날짜를 고르고 장소를 선택하세요.')};
+  그리기();
+}
+function 취소(번호){if(!confirm('이 신청을 취소할까요?'))return;실행('webCancel',[번호],()=>{알림={k:'ok',t:'취소했습니다.'};불러오기();});}
+
+let 월필터=null;
+function 관리(){
+  const 대기=D.rows.filter(o=>o.상태==='대기').sort((a,b)=>a.신청일시.localeCompare(b.신청일시)||a.번호.localeCompare(b.번호));
+  const 철거=D.rows.filter(o=>o.상태==='승인'&&o.종료<D.오늘).sort((a,b)=>a.종료.localeCompare(b.종료));
+  const 오늘설치=D.rows.filter(o=>o.상태==='승인'&&o.시작===D.오늘);
+  const 오늘철거=D.rows.filter(o=>o.상태==='승인'&&o.종료===D.오늘);
+  const 기존=D.rows.filter(o=>직접(o)&&사용중(o)).sort((a,b)=>b.신청일시.localeCompare(a.신청일시));
+  let h='<div class="card"><details class="more"'+(D.rows.length&&!직접열기?'':' open')+'><summary><b>관리자 직접 등록</b> (종이 신청서 · 이미 걸려 있는 현수막)</summary>'+
+    '<div class="me" style="margin:10px 0">날짜·기간 제한 없이 입력할 수 있고, 등록하면 바로 \'승인\'으로 들어갑니다. 오늘 이후 시작이면 게시대 아래 예약에, 오늘 이전 시작이면 게시대 칸에 나옵니다.</div>'+
+    '<div class="row2"><label class="f"><span>부서/학과</span><input type="text" id="g부서" value="'+esc(기존초안.부서||'')+'"></label>'+
+    '<label class="f"><span>행사명 (선택)</span><input type="text" id="g행사명"></label></div>'+
+    '<label class="f"><span>현수막 문구</span><input type="text" id="g문구"></label>'+
+    '<div class="row2"><label class="f"><span>게시 시작일 (모르면 대략)</span><input type="date" id="g시작" value="'+(기존초안.시작||D.오늘)+'" onchange="직접칸갱신()"></label>'+
+    '<label class="f"><span>게시 종료일 (철거 예정일)</span><input type="date" id="g종료" value="'+(기존초안.종료||'')+'" onchange="직접칸갱신()"></label></div>'+
+    '<div class="f"><span class="me" style="font-weight:600">장소와 칸 번호 (여러 곳 선택 가능, 장소마다 칸을 따로 고름 · 맨 위가 1번)</span><div class="places" id="g장소들" style="margin-top:6px">'+
+      D.set.장소.map((p,i)=>'<label style="'+색(p)+';border-left:6px solid var(--pc)"><input type="checkbox" class="g장소" value="'+esc(p)+'"'+((기존초안.장소들||[]).indexOf(p)>=0?' checked':'')+' onchange="직접칸갱신()">'+esc(p)+
+        '<select class="g칸" data-p="'+esc(p)+'" style="width:auto;margin-left:auto;padding:6px 8px;font-size:14px" onclick="event.stopPropagation()" onchange="this.closest(\'label\').querySelector(\'input\').checked=true"></select></label>').join('')+
+    '</div></div>'+
+    '<div class="row2"><label class="f"><span>담당자 (선택)</span><input type="text" id="g담당자"></label>'+
+    '<label class="f"><span>연락처 (선택)</span><input type="text" id="g연락처"></label></div>'+
+    '<button class="b p" onclick="기존등록()">등록하고 계속 입력</button>'+
+    (기존.length?'<div class="sec"><b>직접 등록한 현수막 '+기존.length+'건</b></div>'+기존.map(o=>'<div class="me">'+esc(o.장소)+' '+(o.칸||'?')+'번 · '+esc(o.부서)+' · '+esc(o.행사명)+' · '+짧게(o.시작)+'~'+짧게(o.종료)+' <a href="#" onclick="취소(\''+o.번호+'\');return false">삭제</a></div>').join(''):'')+
+    '</details></div>';
+  h+='<div class="card"><h2>승인 대기 ('+대기.length+')</h2><div class="me" style="margin:-8px 0 12px">먼저 신청한 순서 (신청할 때 칸이 이미 배정되어 있어, 나중 신청이 앞 신청의 칸을 가져갈 수 없습니다)</div>';
+  h+=대기.length?대기.map(o=>{
+    return 항목(o,'<button class="b" onclick="수정열기(\''+o.번호+'\')">수정</button><button class="b" onclick="신청서(\''+o.번호+'\')">신청서</button><button class="b p" onclick="결정(\''+o.번호+'\',\'승인\')">승인</button><button class="b d" onclick="결정(\''+o.번호+'\',\'반려\')">반려</button>');
+  }).join(''):'<div class="empty">대기 중인 신청이 없습니다.</div>';
+  h+='</div><div class="card"><h2>철거 확인 필요 ('+철거.length+')</h2><div class="me" style="margin:-6px 0 10px">게시 종료일이 지났는데 철거 완료 표시가 없는 현수막 (신청 부서에서 직접 철거)</div>';
+  h+=철거.length?철거.map(o=>항목(o,버튼들(o,false))).join(''):'<div class="empty">없습니다.</div>';
+  h+='</div><div class="card"><h2>오늘 ('+짧게(D.오늘)+') 할 일</h2>';
+  h+='<div class="sec" style="margin-top:0"><b>게시 시작 '+오늘설치.length+'건</b></div>'+(오늘설치.length?오늘설치.map(o=>항목(o)).join(''):'<div class="empty">없습니다.</div>');
+  h+='<div class="sec"><b>오늘 게시 종료 '+오늘철거.length+'건</b> (내일부터 철거 확인 대상)</div>'+(오늘철거.length?오늘철거.map(o=>항목(o)).join(''):'<div class="empty">없습니다.</div>');
+  h+='</div>';
+  const 월들=[...new Set(D.rows.map(o=>o.시작.slice(0,7)))].sort().reverse();
+  if(!월필터)월필터=D.오늘.slice(0,7);
+  const 전체=D.rows.filter(o=>o.시작.slice(0,7)===월필터||o.종료.slice(0,7)===월필터).sort((a,b)=>a.시작.localeCompare(b.시작));
+  if(월들.indexOf(월필터)<0)월들.unshift(월필터);
+  h+='<div class="card"><div class="bar"><h2 style="margin:0">전체 기록</h2><select style="width:auto" onchange="월필터=this.value;그리기()">'+월들.map(m=>'<option '+(m===월필터?'selected':'')+' value="'+m+'">'+m.replace('-','년 ')+'월</option>').join('')+'</select><span class="me">'+전체.length+'건 · 원본은 스프레드시트 신청기록 시트</span></div>';
+  h+=전체.length?'<div class="wrap"><table><tr><th>장소</th><th>기간</th><th>부서/학과</th><th>행사명</th><th>상태</th><th></th></tr>'+전체.map(o=>'<tr><td>'+esc(o.장소)+'</td><td style="white-space:nowrap">'+짧게(o.시작)+'~'+짧게(o.종료)+'</td><td>'+esc(o.부서)+'</td><td style="text-align:left">'+esc(o.행사명)+'</td><td>'+태그(o)+'</td><td>'+(사용중(o)?'<button class="b" onclick="수정열기(\''+o.번호+'\')">수정</button> ':'')+(사용중(o)&&o.종료>=D.오늘?'<button class="b d" onclick="취소(\''+o.번호+'\')">취소</button>':'')+'</td></tr>').join('')+'</table></div>':'<div class="empty">이 달 기록이 없습니다.</div>';
+  return h+'</div>';
+}
+let 기존초안={}, 직접열기=false;
+/* 게시 현황에서 칸 누르기: 관리자는 관리 화면으로 */
+function 칸누름(번호){
+  if(D.admin){탭='관리';직접열기=false;알림=null;수정열기(번호);return;}
+  선택번호=번호;그리기();
+}
+function 빈칸누름(p,n,d){
+  if(!D.admin){신청시작(p,d);return;}
+  let 종료=D.set.평일!==false?평일더하기(d,D.set.기본일):더하기(d,D.set.기본일-1);
+  const 다음=D.rows.filter(o=>o.장소===p&&o.칸===n&&사용중(o)&&o.시작>d).sort((a,b)=>a.시작.localeCompare(b.시작))[0];
+  if(다음&&다음.시작<=종료)종료=더하기(다음.시작,-1);
+  기존초안={장소들:[p],칸지정:{[p]:n},시작:d,종료:종료};
+  탭='관리';직접열기=true;수정번호=null;알림={k:'info',t:p+' '+n+'번 칸, '+짧게(d)+' ~ '+짧게(종료)+' 로 등록합니다.'+(다음&&다음.시작>d&&더하기(다음.시작,-1)===종료?' (이 칸은 '+짧게(다음.시작)+'부터 예약이 있어 그 전날까지로 맞췄습니다)':'')+' 내용을 채우고 등록을 누르세요.'};그리기();
+  const el=document.getElementById('g부서');if(el){el.scrollIntoView({block:'center'});el.focus();}
+}
+function 칸옵션(p){const N=칸수(p);return '<option value="">자동 (비어 있는 맨 위 칸)</option>'+Array.from({length:N},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'번'+(i===0?' (맨 위)':i===N-1?' (맨 아래)':'')+'</option>').join('');}
+/* 직접 등록: 날짜가 정해지면 칸마다 사용 중인지 표시 */
+function 직접칸갱신(){
+  const a=(document.getElementById('g시작')||{}).value, b=(document.getElementById('g종료')||{}).value;
+  document.querySelectorAll('#g장소들 select.g칸').forEach(sel=>{
+    const p=sel.dataset.p, N=칸수(p), 전=sel.value;
+    let opts='<option value="">자동 (빈 칸 중 맨 위)</option>';
+    for(let n=1;n<=N;n++){
+      let 표시='';
+      if(a&&b&&b>=a){
+        const 겹=D.rows.find(o=>o.장소===p&&o.칸===n&&사용중(o)&&o.시작<=b&&끝(o)>=a);
+        if(겹)표시=' — 사용 중: '+(겹.부서||'')+' '+짧게(겹.시작)+'~'+짧게(겹.종료);
+      }
+      opts+='<option value="'+n+'"'+(표시?' disabled':'')+'>'+n+'번'+(n===1?' (맨 위)':n===N?' (맨 아래)':'')+표시+'</option>';
+    }
+    sel.innerHTML=opts;
+    const 지정=(기존초안.칸지정||{})[p];
+    if(지정&&sel.querySelector('option[value="'+지정+'"]:not([disabled])'))sel.value=String(지정);
+    else if(전&&sel.querySelector('option[value="'+전+'"]:not([disabled])'))sel.value=전;
+  });
+}
+function 기존등록(){
+  const g=k=>document.getElementById('g'+k).value.trim();
+  const 장소목록=[...document.querySelectorAll('#g장소들 label')].filter(l=>l.querySelector('input').checked)
+    .map(l=>({장소:l.querySelector('input').value,칸:l.querySelector('select').value}));
+  const f={장소목록:장소목록,부서:g('부서'),행사명:g('행사명'),문구:g('문구'),시작:g('시작'),종료:g('종료'),담당자:g('담당자'),연락처:g('연락처')};
+  if(!장소목록.length){알림={k:'err',t:'장소를 한 곳 이상 고르세요.'};그리기();return;}
+  실행('webAddExisting',[f],r=>{
+    기존초안={장소들:장소목록.map(x=>x.장소),부서:f.부서,시작:f.시작,종료:f.종료};직접열기=false;
+    알림={k:r.알림.length?'info':'ok',t:'등록했습니다: '+r.칸+' · '+(f.행사명||f.문구)+(r.알림.length?' (참고: '+r.알림.join(', ')+')':'')};
+    불러오기();
+  });
+}
+function 칸이동(번호,n){실행('webMoveSlot',[번호,n],()=>{알림={k:'ok',t:n+'번 칸으로 옮겼습니다.'};불러오기();});}
+function 결정(번호,k){
+  let 사유='';
+  if(k==='반려'){사유=prompt('반려 사유를 입력하세요. (신청자의 [내 신청]에 표시됩니다)');if(사유===null)return;if(!사유.trim()){alert('반려 사유를 입력하세요.');return;}}
+  else if(!confirm('승인할까요?'))return;
+  실행('webDecide',[번호,k,사유],()=>{알림={k:'ok',t:k+' 처리했습니다.'};불러오기();});
+}
+function 철거(번호){if(!confirm('현수막을 철거했습니까?'))return;실행('webRemoved',[번호],()=>{알림={k:'ok',t:'철거 완료를 기록했습니다.'};불러오기();});}
+function 신청서(번호){
+  const o=D.rows.find(x=>x.번호===번호);if(!o)return;
+  const 같은=D.rows.filter(x=>x.번호.replace(/-\d+$/,'')===o.번호.replace(/-\d+$/,'')&&x.상태!=='취소');
+  const 장소=D.set.장소.map(p=>{const x=같은.find(y=>y.장소===p);return (x?'■ ':'□ ')+esc(p)+(x&&x.칸?' ('+x.칸+'번 칸)':'');}).join('&nbsp;&nbsp;&nbsp;');
+  const 날=s=>{const p=s.split('-');return p[0]+'. '+Number(p[1])+'. '+Number(p[2])+'.';};
+  const 확인=같은.every(x=>x.상태!=='대기'&&x.처리자)?esc(같은[0].처리자)+' ('+esc(같은[0].상태)+', '+esc(같은[0].처리일시.slice(0,10))+')':'(승인 전)';
+  const w=window.open('','_blank');
+  if(!w){alert('팝업이 막혀 있습니다. 브라우저에서 팝업을 허용해 주세요.');return;}
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>현수막 게시 신청서</title><style>'+
+    'body{font-family:"Malgun Gothic",sans-serif;margin:40px;color:#000}h1{text-align:center;font-size:24px;letter-spacing:8px;margin:0 0 24px}'+
+    'table{border-collapse:collapse;width:100%}th,td{border:1px solid #000;padding:10px;font-size:14px}th{background:#eee;width:120px}'+
+    '.cap{text-align:center;background:#ddd;font-weight:bold;letter-spacing:6px}.note{font-size:12px;line-height:1.7;margin-top:18px}'+
+    '.sign{margin-top:30px;text-align:right;line-height:2.2;font-size:14px}@media print{button{display:none}}</style></head><body>'+
+    '<button onclick="print()" style="float:right;padding:6px 14px">인쇄</button><h1>현수막 게시 신청서</h1>'+
+    '<table><tr><td class="cap" colspan="2">게 시 내 용</td></tr>'+
+    '<tr><th>부서/학과</th><td>'+esc(o.부서)+' (담당자 '+esc(o.담당자)+', '+esc(o.연락처)+')</td></tr>'+
+    '<tr><th>게시장소</th><td>'+장소+'</td></tr>'+
+    '<tr><th>내 용</th><td><b>'+esc(o.행사명)+'</b><br><span style="white-space:pre-wrap">'+esc(o.문구)+'</span></td></tr>'+
+    '<tr><th>게시기간</th><td>'+날(o.시작)+' ∼ '+날(o.종료)+' ('+일수글(o.시작,o.종료)+')'+(o.초과사유&&!직접(o)?'<br>'+D.set.기본일+'일 초과 사유: '+esc(o.초과사유):'')+'</td></tr></table>'+
+    '<div class="note"><b>【 취업 홍보게시판 현수막 게시대 운영 안내 】</b><br>1. 현수막 규격 : 6100 × 700 (mm)<br>2. 게시위치 : '+D.set.장소.map(esc).join(' / ')+
+    '<br>3. 게시 기간 : 기본 '+단위()+D.set.기본일+'일, 최대 '+단위()+D.set.최대일+'일(사안별 승인 필요) ※ 행사성 홍보물은 행사 종료 시 즉시 철거<br>4. 게시방법 : 신청 후 취업지원센터 승인 시 게시 가능<br>'+
+    '※ 게시대 수량 부족 시 선정 기준에 따라 철거 요청(폐기)될 수 있음<br>※ 게시기간 만료된 현수막은 게시 요청 부서에서 직접 철거 및 폐기</div>'+
+    '<div class="sign">신청일 : '+날(o.신청일시.slice(0,10))+'<br>신 청 자 : '+esc(o.담당자)+' ('+esc(o.계정)+')<br>확 인 자 : '+확인+'<br><span style="font-size:12px">신청번호 '+esc(o.번호.replace(/-\d+$/,''))+'</span></div></body></html>');
+  w.document.close();
+}
+
+(function(){
+  if(!주소||!공개키||주소.indexOf('여기에')>=0){
+    document.getElementById('main').innerHTML='<div class="card login"><h2>설정이 필요합니다</h2><div class="msg err">config.js 파일에 Supabase 주소와 공개 키를 넣어 주세요.</div></div>';
+    document.getElementById('me').textContent='';return;
+  }
+  const 받음=토큰받기();
+  if(받음&&받음.오류){세션저장(null);로그인화면('로그인하지 못했습니다: '+받음.오류);return;}
+  세션=세션읽기();
+  if(!세션){로그인화면();return;}
+  불러오기();
+})();
+</script>
+</body>
+</html>
